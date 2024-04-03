@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>会员上级列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/admin.css" media="all">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/style.css" media="all">
+</head>
+
+<body>
+    <script type="text/html" id="status">
+        {{#  if (d.is_share == 0) { }}
+            <span style="color: #1e9fff">未结算</span>
+        {{#  } else if (d.is_share == 1) { }}
+            <span style="color: #009688">已结算</span>
+        {{#  } else if (d.is_share == 2) { }}
+            <span style="color: #ff5722">结算中</span>
+        {{#  } }}
+    </script>
+    <div class="layui-fluid">
+        <form class="layui-form seller-form" action="">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2 layui-col-sm4 hidden">
+                    <label class="layui-form-label">是否已分红：</label>
+                    <div class="layui-input-block">
+                        <select name="is_share" class="layui-input">
+                            <option value="">请选择</option>
+                            <option value="0">未结算</option>
+                            <option value="1">已结算</option>
+                            <option value="2">结算中</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-col-md2 layui-col-sm4 hidden">
+                    <button class="layui-btn" lay-submit="" lay-filter="vaeform"><i
+                            class="layui-icon layui-icon-search"></i></button>
+                </div>
+            </div>
+        </form>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="height: calc(100% - 10px)">
+                            <table class="layui-hide" id="test" lay-filter="test"></table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="__SYSTEM__/layui/layui.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/block.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/jqarticle/jquery.min.js"></script>
+    <script>
+        layui.config({
+            base: '/static/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'table', 'form'], function () {
+            var table = layui.table
+                , $ = layui.$
+                , form = layui.form;
+
+            var tableIns = table.render({
+                elem: '#test'
+                , defaultToolbar: []
+                , url: "{:url('statistics/getBonusPoolLists')}"
+                , cols: [[
+                    {field: 'id',title: 'ID'}
+                    , { field: 'money', title: '奖金池额度' }
+                    , { field: 'is_share', title: '状态', align: 'center', templet: '#status'}
+                    , { field: 'create_time', title: '添加时间', align: 'center' }
+                    , { field: 'settle_time', title: '结算时间', align: 'center' }
+                ]],
+                page: {
+                    layout: ['prev', 'page', 'next', 'skip', 'count', 'limit'] //自定义分页布局
+                    , curr: 1 //设定初始在第 5 页
+                    , groups: 5 //只显示 1 个连续页码
+                    , first: false //不显示首页
+                    , last: false //不显示尾页
+                },
+                response: {
+                    statusCode: 200
+                },
+                parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                    let data = res.data;
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "count": data.total, //解析数据长度
+                        "data": data.data //解析数据列表
+                    };
+                },
+                limit: 15,
+                limits: [15, 30, 45, 60, 75, 90],
+                text: "对不起，加载出现异常！"
+            });
+
+
+            form.on('submit(vaeform)', function (data) {
+                var data = {
+                    is_share: data.field.is_share,
+                }
+                tableIns.reload({ where: data });
+                return false;
+            });
+
+        });
+    </script>
+</body>
+
+</html>

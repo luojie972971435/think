@@ -19,7 +19,7 @@ return [
     // 应用地址
     'app_host'               => '',
     // 应用调试模式
-    'app_debug'              => false,
+    'app_debug'              => true,
     // 应用Trace
     'app_trace'              => false,
     // 是否支持多模块
@@ -37,9 +37,9 @@ return [
     // 默认JSONP处理方法
     'var_jsonp_handler'      => 'callback',
     // 默认时区
-    'default_timezone'       => 'Asia/Shanghai',
+    'default_timezone'       => 'PRC',
     // 是否开启多语言
-    'lang_switch_on'         => false,
+    'lang_switch_on'         => true,
     // 默认全局过滤方法 用逗号分隔多个
     'default_filter'         => '',
     // 默认语言
@@ -54,7 +54,7 @@ return [
     // +----------------------------------------------------------------------
 
     // 默认模块名
-    'default_module'         => 'index',
+    'default_module'         => 'api',
     // 禁止访问模块
     'deny_module_list'       => ['common'],
     // 默认控制器名
@@ -94,6 +94,12 @@ return [
     'url_common_param'       => false,
     // URL参数方式 0 按名称成对解析 1 按顺序解析
     'url_param_type'         => 0,
+
+    // 是否开启路由
+    'url_route_on'           => true,
+    // 路由配置文件（支持配置多个）
+    'route_config_file'      => ['route'],
+
     // 是否开启路由延迟解析
     'url_lazy_route'         => false,
     // 是否强制使用路由
@@ -123,24 +129,30 @@ return [
     // 全局请求缓存排除规则
     'request_cache_except'   => [],
     // 是否开启路由缓存
-    'route_check_cache'      => false,
+    'route_check_cache'      => true,
     // 路由缓存的Key自定义设置（闭包），默认为当前URL和请求类型的md5
     'route_check_cache_key'  => '',
     // 路由缓存类型及参数
     'route_cache_option'     => [],
+    //是否开启token验证预防CSRF攻击
+    'validate_token'         => false,
+
 
     // 默认跳转页面对应的模板文件
     'dispatch_success_tmpl'  => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
     'dispatch_error_tmpl'    => Env::get('think_path') . 'tpl/dispatch_jump.tpl',
-
     // 异常页面的模板文件
     'exception_tmpl'         => Env::get('think_path') . 'tpl/think_exception.tpl',
-
     // 错误显示信息,非调试模式有效
     'error_message'          => '页面错误！请稍后再试～',
     // 显示错误信息
     'show_error_msg'         => false,
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
-
+    
+    // 消息队列
+    // 'providers' => [
+    //     // 其他服务提供者...
+    //     think\queue\ServiceProvider::class,
+    // ],
 ];

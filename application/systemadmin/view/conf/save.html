@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>系统配置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/admin.css" media="all">
+    <link rel="stylesheet" href="__SYSTEM__/layui/style.css" media="all">
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">系统配置</div>
+                    <div class="layui-card-body">
+                        <div class="layui-tab">
+                            <ul class="layui-tab-title">
+                                {volist name="group" id="vo"}
+                                <li><a href="{:url('conf/save', ['id' => $key])}" {if condition="$key eq $id"}class="layui-this" {/if}>{$vo}</a></li>
+                                {/volist}
+                            </ul>
+                            <div class="layui-tab-content">
+                                <div class="layui-row">
+                                    <form class="layui-form vae-content" id="editForm">
+                                        {volist name="list" id="vo" key="k"}
+                                            {switch name="$vo.type"}
+                                                {case value="1"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-col-sm3">
+                                                                <input type="number" name="config[{$vo.name}]" autocomplete="off" class="layui-input" value="{$vo.value}">
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                                {case value="2"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-col-sm3">
+                                                                <input type="text" name="config[{$vo.name}]" autocomplete="off" class="layui-input" value="{$vo.value}">
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                    {/case}
+                                                {case value="3"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-col-sm3">
+                                                                <textarea name="config[{$vo.name}]" autocomplete="off" class="layui-textarea">{$vo.value}</textarea>
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                                {case value="4"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-col-sm3">
+                                                                <textarea name="config[{$vo.name}]" autocomplete="off" class="layui-textarea">{$vo.value}</textarea>
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                                {case value="5"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-col-sm3">
+                                                                <select class="layui-select" name="config[{$vo.name}]">
+                                                                    {volist name="$vo.extra" id="vs"}
+                                                                    <option value="{$key}" {if condition="$key eq $vo.value"}selected{/if}>{$vs}</option>
+                                                                    {/volist}
+                                                                </select>
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                                {case value="6"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-col-sm3">
+                                                                {volist name="$vo.extra" id="vs"}
+                                                                <input type="radio" lay-skin="primary" name="config[{$vo.name}]" value="{$key}" title="{$vs}" {if condition="$key eq $vo.value"}checked{/if}>
+                                                                {/volist}
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                                {case value="7"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-upload layui-col-sm3" style="width: 92px;float: left;">
+                                                                <button type="button" class="layui-btn test-upload-demoMore" lay-data="{ url: '{:url('api/uploadInst')}' }">图片上传</button>
+                                                                <div class="layui-upload-list">
+                                                                    <img class="layui-upload-img" src="{$vo.value}" />
+                                                                    <input type="hidden" name="config[{$vo.name}]" value="{$vo.value}">
+                                                                </div>
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                                {case value="8"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-col-sm3">
+                                                                <input type="text" name="config[{$vo.name}]" autocomplete="off" class="layui-input test-laydate-item" value="{$vo.value}">
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                                {case value="9"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-col-sm3">
+                                                                <textarea id="layeditDemo" style="display: none;" name="config[{$vo.name}]">{$vo.value}</textarea>
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                                {case value="10"}
+                                                    <div class="layui-form-item">
+                                                        <label class="layui-form-label">{$vo.title}：</label>
+                                                        <div class="layui-input-block">
+                                                            <div class="layui-upload layui-col-sm3"
+                                                                style="width: 92px;float: left;">
+                                                                <button type="button" class="layui-btn test" lay-data="{ url: '{:url('api/uploadInst')}', accept: 'file' }">文件上传</button>
+                                                                <div class="layui-upload-block" style="margin-top: 15px;">
+                                                                    <input type="text" name="config[{$vo.name}]" class="layui-input" value="{$vo.value}">
+                                                                </div>
+                                                            </div>
+                                                            {if condition="$vo['remark']"}
+                                                                <div class="layui_info">
+                                                                    {$vo.remark}
+                                                                </div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/case}
+                                            {/switch}
+                                        {/volist}
+                                        <div class="layui-form-item">
+                                            <div class="layui-input-block">
+                                                {if condition="$uid eq 1"}
+                                                <button class="layui-btn" type="button" lay-submit lay-filter="vaeyo-submit" vaeyo-submit>立即提交</button>
+                                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="__SYSTEM__/jqarticle/jquery.min.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/layui.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/block.js"></script>
+    <script>
+        layui.config({
+            base: '/static/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'upload', 'form', 'laydate', 'layedit'], function () {
+            var $ = layui.$
+                , form = layui.form
+                , upload = layui.upload
+                , laydate = layui.laydate
+                , layedit = layui.layedit;
+
+            // 上传图片，绑定多个元素
+            upload.render({
+                elem: ".test-upload-demoMore"
+                , done: function (res) {
+                    var item = this.item;
+                    if (res.code == 1) {
+                        item.nextAll('div').find('img').attr('src', res.data);
+                        item.nextAll('div').find('input').val(res.data);
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                }
+            });
+
+            upload.render({
+                elem: ".test"
+                , done: function (res) {
+                    var item = this.item;
+                    if (res.code == 1) {
+                        item.nextAll('div').find('input').val(res.data);
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                }
+            });
+
+            // 时间范围选择器，绑定多个元素
+            lay('.test-laydate-item').each(function () {
+                laydate.render({
+                    elem: this
+                    , trigger: 'click'
+                    , type: 'time'
+                    , range: true
+                });
+            });
+
+            // 富文本框
+            layedit.set({
+                //暴露layupload参数设置接口 --详细查看layupload参数说明
+                uploadImage: {
+                    url: "{:url('api/uploadInst')}",
+                    accept: 'image',
+                    acceptMime: 'image/*',
+                    exts: 'jpg|png|gif|bmp|jpeg',
+                    size: '10240'
+                }
+                , uploadVideo: {
+                    url: "{:url('api/uploadInst')}",
+                    accept: 'video',
+                    acceptMime: 'video/*',
+                    exts: 'mp4|flv|avi',
+                    size: '20480'
+                }
+                //右键删除图片/视频时的回调参数，post到后台删除服务器文件等操作，
+                //传递参数：
+                //图片： imgpath --图片路径
+                //视频： filepath --视频路径 imgpath --封面路径
+                // , calldel: {
+                //     url: '/Attachment/DeleteFile'
+                // }
+                //开发者模式 --默认为false
+                , devmode: false
+                //插入代码设置
+                , codeConfig: {
+                    hide: false,  //是否显示编码语言选择框
+                    default: 'javascript' //hide为true时的默认语言格式
+                }
+                , tool: [
+                    'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face', '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'images', 'image_alt', 'video', 'anchors', '|', 'table', 'fullScreen'
+                ]
+                , height: '100%'
+            });
+            var index = layedit.build('layeditDemo');
+
+
+            form.on('submit(vaeyo-submit)', function (data) {
+                layedit.sync(index);
+                var data = $('#editForm').serialize();
+                JsPost("{:url('conf/saveBase')}", data, function (res) {
+                    if (res.code == 200) {
+                        layer.msg(res.msg, {
+                            time: 1500
+                        }, function () {
+                            if (res.url) {
+                                location.replace(res.url);
+                            } else {
+                                location.reload(true);
+                            }
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1500});
+                    }
+                });
+                return false;
+            })
+        });
+    </script>
+</body>
+
+</html>

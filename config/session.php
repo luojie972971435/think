@@ -12,15 +12,35 @@
 // +----------------------------------------------------------------------
 // | 会话设置
 // +----------------------------------------------------------------------
-
 return [
-    'id'             => '',
-    // SESSION_ID的提交变量,解决flash上传跨域
+    // 默认驱动
+    'type'       => 'redis',
+    // session_name
+    'name'       => 'PHPSESSID',
+    // session_id的提交变量
     'var_session_id' => '',
+    // SESSION_ID的提交变量类型，空为自动检测，支持header
+    'id'         => '',
     // SESSION 前缀
-    'prefix'         => 'think',
-    // 驱动方式 支持redis memcache memcached
-    'type'           => '',
-    // 是否自动开启 SESSION
-    'auto_start'     => true,
+    'prefix'     => 'think',
+    // session保存时间
+    'expire'     => 3600,
+    // session 保存路径
+    'path'       => '../runtime/session/',
+    // session有效期
+    'domain'     => '',
+    // session 驱动配置
+    'use_trans_sid' => 1,
+    //是否自动开启 SESSION
+    'auto_start' => true,
+
+
+    // redis 相关配置
+    'host'       => '127.0.0.1',
+    'port'       => 6379,
+    'password'   => '',
+    'select'     => 0,
+    'timeout'    => 0,
+    'persistent' => false,
+    'prefix'     => '',
 ];

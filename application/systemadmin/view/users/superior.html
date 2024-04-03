@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>会员上级列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/admin.css" media="all">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/style.css" media="all">
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-form seller-form" action="">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md2 layui-col-sm4 hidden">
+                    <button class="layui-btn layui-btn-primary" onclick="javascript:history.back(-1);">返回</button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="height: calc(100% - 30px)">
+                            <table class="layui-hide" id="test" lay-filter="test"></table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="__SYSTEM__/layui/layui.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/block.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/jqarticle/jquery.min.js"></script>
+    <script>
+        layui.config({
+            base: '/static/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'table', 'form'], function () {
+            var table = layui.table
+                , $ = layui.$
+                , form = layui.form;
+
+            var tableIns = table.render({
+                elem: '#test'
+                , toolbar: false
+                , url: "{:url('users/getSuperiorList',['userid' => $userid])}"
+                , cols: [[
+                    { field: 'userid', width: 100, title: '会员ID' }
+                    , { field: 'waddress', title: '钱包标识', width: 370, align: 'left' }
+                    , { field: 'ulevel', title: '层级', width: 90, align: 'center' }
+                    , { field: 'level_name', width: 90, title: '会员等级', align: 'center' }
+                    , { field: 'platoon_level_name', width: 120, title: '公排等级', align: 'center' }
+                    , { field: 'total_income', width: 120, title: '总收益', align: 'center' }
+                    , { field: 'income', width: 200, title: '可提现收益', align: 'center' }
+                    , { field: 'project_income', width: 120, title: '已提现收益', align: 'center' }
+                    , { field: 'integral', width: 180, title: '积分', align: 'center' }
+                    , { field: 'total_num', width: 120, title: '总次数', align: 'center' }
+                    , { field: 'out_num', width: 120, title: '出局次数', align: 'center' }
+                    , { field: 'pitch_num', width: 120, title: '参与次数', align: 'center' }
+                    , { field: 'line_num', width: 120, title: '排票次数', align: 'center' }
+                ]],
+                page: {
+                    layout: ['prev', 'page', 'next', 'skip', 'count', 'limit'] //自定义分页布局
+                    , curr: 1 //设定初始在第 5 页
+                    , groups: 5 //只显示 1 个连续页码
+                    , first: false //不显示首页
+                    , last: false //不显示尾页
+                },
+                response: {
+                    statusCode: 200
+                },
+                parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
+                    let data = res.data;
+                    return {
+                        "code": res.code, //解析接口状态
+                        "msg": res.msg, //解析提示文本
+                        "count": data.total, //解析数据长度
+                        "data": data.data //解析数据列表
+                    };
+                },
+                limit: 15,
+                limits: [15, 30, 45, 60, 75, 90],
+                text: "对不起，加载出现异常！"
+            });
+        });
+
+    </script>
+</body>
+
+</html>

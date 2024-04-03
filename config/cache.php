@@ -15,11 +15,33 @@
 
 return [
     // 驱动方式
-    'type'   => 'File',
+    'type'   => 'redis',
     // 缓存保存目录
     'path'   => '',
     // 缓存前缀
     'prefix' => '',
     // 缓存有效期 0表示永久缓存
     'expire' => 0,
+    // 缓存连接参数
+
+    'stores' => [
+        // 文件缓存
+        'file' => [
+            'driver' => 'file',
+            'path'   => '../runtime/cache/',
+        ],
+
+        // Redis缓存
+        'redis' => [
+            'driver'     => 'redis',
+            'host'       => '127.0.0.1',
+            'port'       => 6379,
+            'password'   => '',
+            'select'     => 0,
+            'timeout'    => 0,
+            'expire'     => 0,
+            'persistent' => false,
+            'prefix'     => '',
+        ],
+    ],
 ];

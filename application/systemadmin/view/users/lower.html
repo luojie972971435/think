@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>会员下级列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/admin.css" media="all">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/style.css" media="all">
+    <style type="text/css">
+        .laytable-cell-10001-id,
+        .laytable-cell-10001-waddress {
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/html" id="total_income">
+        {{ d.total_income == 0 ? '0' : d.total_income }}
+    </script>
+    <script type="text/html" id="income">
+        {{ d.income == 0 ? '0' : d.income }}
+    </script>
+    <script type="text/html" id="project_income">
+        {{ d.project_income == 0 ? '0' : d.project_income }}
+    </script>
+    <script type="text/html" id="integral">
+        {{ d.integral == 0 ? '0' : d.integral }}
+    </script>
+    <script type="text/html" id="total_num">
+        {{ d.total_num == 0 ? '0' : d.total_num }}
+    </script>
+    <script type="text/html" id="out_num">
+        {{ d.out_num == 0 ? '0' : d.out_num }}
+    </script>
+    <script type="text/html" id="pitch_num">
+        {{ d.pitch_num == 0 ? '0' : d.pitch_num }}
+    </script>
+    <script type="text/html" id="line_num">
+        {{ d.line_num == 0 ? '0' : d.line_num }}
+    </script>
+    <div class="layui-fluid">
+        <div class="layui-form seller-form" action="">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12 layui-col-sm12 hidden">
+                    <button class="layui-btn layui-btn-primary" onclick="javascript:history.back(-1);">返回</button>
+                    <span style="font-size: 13px;color: #FF5722;margin-left: 10px;line-height: 38px;">下级参与总次数：<a style="font-size: 13px;color: #FF5722;">{$win_count}</a></span>
+                    <span style="font-size: 13px;color: #FF5722;margin-left: 15px;line-height: 38px;">下级参与总人数：<a style="font-size: 13px;color: #FF5722;">{$play_ucount}</a></span>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="height: calc(100% - 30px)">
+                            <table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="__SYSTEM__/layui/layui.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/block.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/jqarticle/jquery.min.js"></script>
+    <script>
+        var treeGrid = null, tableId = 'treeTable';
+        layui.config({
+            base: '/static/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index', //主入口模块
+            treeGrid: 'treeGrid'
+        }).use(['index', 'treeGrid', 'layer', 'table', 'form'], function () {
+            var $ = layui.jquery
+                , form = layui.form
+                , table = layui.table
+                , treeGrid = layui.treeGrid
+                , layer = layui.layer;
+
+            treeGrid.render({
+                id: tableId
+                , elem: '#' + tableId
+                , idField: 'id'
+                , url: "{:url('users/getLowerList',['userid' => $userid])}"
+                , cellMinWidth: 100
+                , treeId: 'id'//树形id字段名称
+                , treeUpId: 'pid'//树形父id字段名称
+                , treeShowName: 'id'//以树形式显示的字段
+                , height: 'full-0'
+                , iconOpen: true//是否显示图标【默认显示】
+                , isOpenDefault: false
+                , cols: [[
+                    { field: 'id', width: 150, title: '会员ID', align: 'left' }
+                    , { field: 'waddress', title: '钱包标识', width: 370, align: 'left' }
+                    , { field: 'ulevel', title: '层级', width: 90, align: 'center' }
+                    , { field: 'level_name', width: 90, title: '会员等级', align: 'center' }
+                    , { field: 'platoon_level_name', width: 120, title: '公排等级', align: 'center' }
+                    , { field: 'total_income', width: 120, title: '总收益', align: 'center', templet: '#total_income' }
+                    , { field: 'income', width: 200, title: '可提现收益', align: 'center', templet: '#income' }
+                    , { field: 'project_income', width: 120, title: '已提现收益', align: 'center', templet: '#project_income' }
+                    , { field: 'integral', width: 180, title: '积分', align: 'center', templet: '#integral' }
+                    , { field: 'total_num', width: 120, title: '总次数', align: 'center', templet: '#total_num' }
+                    , { field: 'out_num', width: 120, title: '出局次数', align: 'center', templet: '#out_num' }
+                    , { field: 'pitch_num', width: 120, title: '参与次数', align: 'center', templet: '#pitch_num' }
+                    , { field: 'line_num', width: 120, title: '排票次数', align: 'center', templet: '#line_num' }
+                ]],
+                page: false,
+                text: "对不起，加载出现异常！"
+            });
+
+        
+  
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>后台登录</title>
+        <link rel="stylesheet" href="__SYSTEM__/layui/css/layui.css" media="all"/>
+        <link rel="stylesheet" href="__SYSTEM__/layui/css/login.css" media="all"/>
+        <style>
+            .layui-input,
+            .layui-select,
+            .layui-textarea {
+                background-color: inherit;
+                padding-left: 30px;
+            }
+        </style>
+        <script>
+            if (window.top !== window.self) {
+                window.top.location = window.location;
+            }
+        </script>
+    </head>
+
+    <body
+        id="vaeyo-index-login">
+        <!--背景粒子图 start-->
+        <div class="layui-row">
+            <div class="layui-col-sm12 layui-col-md12">
+                <div class="layui-carousel zyl_login_height" id="zyllogin" lay-filter="zyllogin" style="height: 100% !important;">
+                    <div carousel-item="">
+                        <div class="layui-this">
+                            <div class="zyl_login_cont"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--背景粒子图 end-->
+        <div class="zyl_lofo_main">
+            <fieldset class="layui-elem-field layui-field-title zyl_mar_02">
+                <legend>欢迎登陆 - 管理平台</legend>
+            </fieldset>
+            <div class="layui-row">
+                <form class="layui-form zyl_pad_01" id="vaeyo-login">
+                    <div class="layui-col-sm12 layui-col-md12">
+                        <div class="layui-form-item">
+                            <input type="text" name="username" autocomplete="off" placeholder="用户名" class="layui-input">
+                            <i class="layui-icon layui-icon-username zyl_lofo_icon"></i>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm12 layui-col-md12">
+                        <div class="layui-form-item">
+                            <input type="password" name="pwd" autocomplete="off" placeholder="密码" class="layui-input">
+                            <i class="layui-icon layui-icon-password zyl_lofo_icon"></i>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm12 layui-col-md12">
+                        <div class="layui-form-item">
+                            <div id="slider"></div>
+                            <input type="hidden" name="logintoken" id="logintoken" value=""/>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm12 layui-col-md12">
+                        <button class="layui-btn layui-btn-fluid" id="btn_login" type="button" lay-submit lay-filter="vaeyo-submit" vaeyo-submit>立即登录</button>
+                    </div>
+                </form>
+            </div>
+            <div class="copyright">© {:date('Y')} 1.0 企业版</div>
+        </div>
+        <script type="text/javascript" src="__SYSTEM__/layui/layui.js"></script>
+        <script type="text/javascript" src="__SYSTEM__/layui/block.js"></script>
+        <script type="text/javascript" src="__SYSTEM__/jqarticle/jquery.min.js"></script>
+        <script type="text/javascript" src="__SYSTEM__/jqarticle/jparticle.min.js"></script>
+        <script>
+            layui.config({
+                base: '/static/layuiadmin/' // 静态资源所在路径
+            }).extend({
+                index: 'lib/index' // 主入口模块
+            }).use([
+                'index', 'form', 'sliderVerify', 'element'
+            ], function () {
+                var form = layui.form,
+                    $ = layui.jquery,
+                    sliderVerify = layui.sliderVerify,
+                    element = layui.element;
+
+                form.on('submit(vaeyo-submit)', function (data) {
+                    var data = {
+                        username: data.field.username,
+                        pwd: data.field.pwd,
+                        logintoken: data.field.logintoken
+                    };
+                    if (!checkinfo(data)) {
+                        return false;
+                    }
+                    JsPost("{:url('Login/toLogin')}", data, function (res) {
+                        if (res.code == 200) {
+                            layer.msg(res.msg, {
+                                time: 1500
+                            }, function () {
+                                window.location.href = "{:url('index/index')}";
+                            });
+                        } else {
+                            layer.msg(res.msg, {
+                                time: 1500
+                            }, function () {
+                                $("#logintoken").val('');
+                                slider.reset();
+                            });
+                        }
+                    });
+                    return false;
+                });
+
+                $("#vaeyo-index-login").keydown(function (e) {
+                    if (e.keyCode === 13) {
+                        $("#btn_login").trigger("click");
+                    }
+                });
+
+                var checkinfo = function (data) {
+                    if (! data.username) {
+                        layer.msg('用户名为必填项');
+                        return false;
+                    }
+                    if (! data.pwd) {
+                        layer.msg('密码为必填项');
+                        return false;
+                    }
+                    if (slider.isOk() == false || ! data.logintoken) {
+                        layer.msg("请通过滑块验证");
+                        slider.reset();
+                        return false;
+                    }
+                    return true;
+                };
+
+                var slider = sliderVerify.render({
+                    elem: "#slider", isAutoVerify: false, // 自动验证
+                    onOk: function () {
+                        JsAjaxPost("{:url('Login/loginToken')}", {}, function (res) {
+                            if (res.code == 200) {
+                                $("#logintoken").val(res.data.logintoken);
+                            } else {
+                                layer.msg(res.msg, {
+                                    time: 1500
+                                }, function () {
+                                    slider.reset();
+                                });
+                            }
+                        }, function (e) {
+                            layer.msg('网络连接失败，请稍后重试', {
+                                time: 1500
+                            }, function () {
+                                slider.reset();
+                            });
+                        })
+                        return false;
+                    }
+                });
+
+                var zyl_login_height = $(window).height();
+
+                var zyl_car_height = $(".zyl_login_height").css("cssText", "height:" + zyl_login_height + "px!important");
+
+                // 粒子线条
+                $(".zyl_login_cont").jParticle({
+                    background: "rgba(0,0,0,0)", // 背景颜色
+                    color: "#fff", // 粒子和连线的颜色
+                    particlesNumber: 50,
+                    // 粒子数量
+                    // disableLinks:true,//禁止粒子间连线
+                    // disableMouse:true,//禁止粒子间连线(鼠标)
+                    particle: {
+                        minSize: 1, // 最小粒子
+                        maxSize: 3, // 最大粒子
+                        speed: 30, // 粒子的动画速度
+                    }
+                });
+            })
+        </script>
+    </body>
+
+</html>

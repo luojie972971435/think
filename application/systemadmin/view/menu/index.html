@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>菜单列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/admin.css" media="all">
+    <style type="text/css">
+        .laytable-cell-10001-title {
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/html" id="switchTpl">
+        <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="显示|关闭" lay-filter="statusDemo" {{ d.status == 1 ? 'checked' : '' }} >
+    </script>
+    <script type="text/html" id="operate">
+        <a class="layui-btn layui-btn-xs" lay-event="add">添加子菜单</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑菜单</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除菜单</a>
+    </script>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="padding-bottom: 10px;">
+                            <a class="layui-btn" href="javascript:;" vaeyo-add>添加菜单</a>
+                        </div>
+                        <div style="height: calc(100% - 30px)">
+                            <table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="__SYSTEM__/layui/layui.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/block.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/jqarticle/jquery.min.js"></script>
+    <script>
+        var treeGrid = null, tableId = 'treeTable';
+        layui.config({
+            base: '/static/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index', //主入口模块
+            treeGrid: 'treeGrid'
+        }).use(['index', 'treeGrid', 'layer', 'table', 'form'], function () {
+            var $ = layui.jquery
+                , form = layui.form
+                , table = layui.table
+                , treeGrid = layui.treeGrid
+                , layer = layui.layer;
+
+            treeGrid.render({
+                id: tableId
+                , elem: '#' + tableId
+                , idField: 'id'
+                , url: "{:url('menu/getMenuList')}"
+                , cellMinWidth: 100
+                , treeId: 'id'//树形id字段名称
+                , treeUpId: 'pid'//树形父id字段名称
+                , treeShowName: 'title'//以树形式显示的字段
+                , height: 'full-0'
+                , iconOpen: true//是否显示图标【默认显示】
+                , isOpenDefault: false
+                , cols: [[
+                    { field: 'id', width: 90, title: 'ID', align: 'center' }
+                    , { field: 'title', width: 250, title: '菜单名称', edit: "text" }
+                    , { field: 'src', title: '路由', align: 'center' }
+                    , { field: 'param', title: '参数', align: 'center' }
+                    , { field: 'p_title', title: '父菜单', width: 180, align: 'center' }
+                    , { field: 'sort', width: 120, title: '排序', edit: "text", align: 'center' }
+                    , { field: 'status', title: '状态', width: 120, templet: '#switchTpl', unresize: true }
+                    , { field: 'right', width: 260, title: '操作', align: 'center', templet: "#operate" }
+                ]],
+                page: false,
+                text: "对不起，加载出现异常！"
+            });
+
+            // 添加菜单弹窗
+            $("[vaeyo-add]").on("click", function () {
+                open("{:url('menu/add')}", '添加菜单', '650px', '515px');
+            })
+
+            //修改状态
+            form.on('switch(statusDemo)', function (obj) {
+                var data = { "id": this.value, "checked": obj.elem.checked };
+                JsGet("{:url('menu/ajaxMenustatus')}", data, function (res) {
+                    layer.msg(res.msg)
+                });
+                return false;
+            });
+
+            //单元格编辑
+            treeGrid.on('edit(' + tableId + ')', function (obj) {
+                layer.confirm('确定要提交修改吗?', { icon: 3, title: '提示' }, function (index) {
+                    var data = { id: obj.data.id, sort: obj.value };
+                    JsGet("{:url('menu/editSort')}", data, function (res) {
+                        layer.msg(res.msg)
+                    });
+                    layer.close(index);
+                });
+            });
+
+            //删除
+            treeGrid.on('tool(' + tableId + ')', function (obj) {
+                if (obj.event === 'del') {
+                    layer.confirm('确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
+                        JsGet("{:url('menu/deleteMenu')}", { id: obj.data.id }, function (res) {
+                            layer.msg(res.msg)
+                            if (res.code == 200) {
+                                obj.del();
+                            }
+                        });
+                        layer.close(index);
+                    });
+                } else if (obj.event === 'add') {
+                    open("{:url('menu/add')}?pid=" + obj.data.id, '添加子菜单', '650px', '515px');
+                } else if (obj.event === 'edit') {
+                    open("{:url('menu/edit')}?id=" + obj.data.id, '编辑菜单', '650px', '515px');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

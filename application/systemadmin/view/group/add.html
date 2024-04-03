@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>添加平台角色</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/admin.css" media="all">
+    <style type="text/css">
+        .layui-form-item .layui-form-checkbox[lay-skin="primary"] {
+            margin-top: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">添加平台角色</div>
+                    <div class="layui-card-body">
+                        <form class="layui-form vae-content" id="editForm">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">角色名称：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="title" lay-verify="required" placeholder="请输入角色名称"
+                                        autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">菜单权限：</label>
+                                <div class="layui-input-block" style="max-width: 466px;">
+                                    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                                        <ul class="layui-tab-title">
+                                            <li class="layui-this">权限配置</li>
+                                            <li>菜单配置</li>
+                                        </ul>
+                                        <div class="layui-tab-content">
+                                            <div class="layui-tab-item layui-show">
+                                                <div class="layui-input-inline" style="min-width: 466px;">
+                                                    <div id="vaeTree"></div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-tab-item">
+                                                <div class="layui-input-inline" style="min-width: 466px;">
+                                                    <div id="vaeMenu"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">状态：</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="status" value="1" title="正常" checked>
+                                    <input type="radio" name="status" value="0" title="禁用">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">备注说明：</label>
+                                <div class="layui-input-block">
+                                    <textarea name="info" id="info" autocomplete="off" class="layui-textarea"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    {:myshopToken('add_group')}
+                                    <button class="layui-btn" type="button" lay-submit lay-filter="vaeyo-submit" vaeyo-submit>立即提交</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="__SYSTEM__/jqarticle/jquery.min.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/layui.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/block.js"></script>
+    <script>
+        layui.config({
+            base: '/static/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'authtree', 'form'], function () {
+            var $ = layui.$
+                , form = layui.form
+                , authtree = layui.authtree;
+
+
+            JsGet("{:url('api/getRuleTree')}", {}, function (data) {
+                authtree.render('#vaeTree', data.data.trees, { inputname: 'rules[]', layfilter: 'lay-check-auth', openall: false });
+            });
+        
+            JsGet("{:url('api/getMenuTree')}", {}, function (data) {
+                authtree.render('#vaeMenu', data.data.trees, { inputname: 'menus[]', layfilter: 'lay-check-auth', openall: false });
+            });
+
+            form.on('submit(vaeyo-submit)', function (data) {
+                var data = $('#editForm').serialize();
+                JsPost("{:url('group/add')}", data);
+                return false;
+            })
+
+        });
+    </script>
+</body>
+
+</html>

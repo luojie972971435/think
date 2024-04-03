@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>后台管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="__SYSTEM__/layui/css/admin.css" media="all">
+    <style>
+        .layui-logo {
+            font-size: 15px !important;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!-- 头部区域 -->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible" lay-unselect>
+                        <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item" lay-unselect>
+                        <a href="javascript:;" layadmin-event="refresh" title="刷新">
+                            <i class="layui-icon layui-icon-refresh-3"></i>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+                    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                        <a href="javascript:;" layadmin-event="fullscreen">
+                            <i class="layui-icon layui-icon-screen-full"></i>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item" lay-unselect>
+                        <a href="javascript:;">
+                            <cite>{$admin.realname}</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" vaeyo-editinfo>基本资料</a></dd>
+                            <dd><a href="javascript:;" vaeyo-editpwd>修改密码</a></dd>
+                            <hr>
+                            <dd vaeyo-logout><a>退出</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                        <a href="javascript:;" title="清理缓存" vaeyo-cache><i
+                                class="layui-icon layui-icon-fonts-clear"></i></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- 侧边菜单 -->
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <div class="layui-logo">
+                        <span>{:Config('system.COMPANY_NAME')}</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+                        {volist name="treeMenu" id="v"}
+                            <li class="layui-nav-item">
+                                {empty name="$v.list"}
+                                    <a lay-href="{:url($v.src,$v.param)}">
+                                        <i class="layui-icon {$v.icon}"></i>
+                                        <cite>{$v.title}</cite>
+                                    </a>
+                                {else/}
+                                    <a href="javascript:;" lay-tips="{$v.title}" lay-direction="2">
+                                        <i class="layui-icon {$v.icon}"></i>
+                                        <cite>{$v.title}</cite>
+                                    </a>                                    
+                                    <dl class="layui-nav-child">
+                                        {volist name="$v.list" id="a"}
+                                            {empty name="$a.list"}
+                                                <dd data-name="console">
+                                                    <a lay-href="{:url($a.src,$a.param)}">{$a.title}</a>
+                                                </dd>
+                                            {else/}
+                                                <dd>
+                                                    <a href="javascript:;">{$a.title}</a>
+                                                    <dl class="layui-nav-child">
+                                                        {volist name="$a.list" id="e"}
+                                                        <dd><a lay-href="{:url($e.src,$e.param)}">{$e.title}</a></dd>
+                                                        {/volist}
+                                                    </dl>
+                                                </dd>
+                                            {/empty}
+                                        {/volist}
+                                    </dl>
+                                {/empty}
+                            </li>
+                        {/volist}
+                    </ul>
+                </div>
+            </div>
+            <!-- 页面标签 -->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+                <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+                <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+                <div class="layui-icon layadmin-tabs-control layui-icon-down">
+                    <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+                        <li class="layui-nav-item" lay-unselect>
+                            <a href="javascript:;"></a>
+                            <dl class="layui-nav-child layui-anim-fadein">
+                                <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+                                <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+                                <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </div>
+                <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+                    <ul class="layui-tab-title" id="LAY_app_tabsheader">
+                        <li lay-id="{:url('main/index')}" lay-attr="{:url('main/index')}" class="layui-this"><i
+                                class="layui-icon layui-icon-home"></i></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- 主体内容 -->
+            <div class="layui-body" id="LAY_app_body">
+                <div class="layadmin-tabsbody-item layui-show" id="content-main">
+                    <iframe src="{:url('main/index')}" frameborder="0" align="left" width="100%" height="100%"
+                        scrolling="yes" class="layadmin-iframe"></iframe>
+                </div>
+            </div>
+            <!-- 辅助元素，一般用于移动设备下遮罩 -->
+            <div class="layadmin-body-shade" layadmin-event="shade"></div>
+        </div>
+    </div>
+    <script type="text/javascript" src="__SYSTEM__/layui/layui.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/layui/block.js"></script>
+    <script type="text/javascript" src="__SYSTEM__/jqarticle/jquery.min.js"></script>
+    <script>
+        layui.config({
+            base: '/static/layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index'], function () {
+            var form = layui.form;
+
+            $("[vaeyo-logout]").on("click", function () {
+                layer.confirm('确认注销登录吗?', { icon: 7, title: '提示' }, function (index) {
+                    JsAjaxPost("{:url('adminbase/logout')}", {}, function (res) {
+                        if (res.code == 200) {
+                            layer.msg(res.msg, { time: 1500 }, function () {
+                                location.href = "{:url('login/index')}"
+                            });
+                        } else {
+                            layer.msg(res.msg, { time: 1500 });
+                        }
+                    })
+                    layer.close(index);
+                });
+            })
+
+            $("[vaeyo-editinfo]").on("click", function () {
+                open("{:url('main/info')}", '修改基本资料', '650px', '577px');
+            })
+
+            $("[vaeyo-editpwd]").on("click", function () {
+                open("{:url('main/password')}", '修改密码', '450px', '356px');
+            })
+
+            $("[vaeyo-cache]").on("click", function () {
+                layer.confirm('确认清除缓存吗?', { icon: 7, title: '提示' }, function (index) {
+                    JsAjaxPost("{:url('adminbase/clearcache')}", {}, function (res) {
+                        if (res.code == 200) {
+                            layer.msg(res.msg, { time: 1500 }, function () {
+                                location.href = "{:url('index/index')}"
+                            });
+                        } else {
+                            layer.msg(res.msg, { time: 1500 });
+                        }
+                    })
+                    layer.close(index);
+                });
+            })
+        })
+    </script>
+</body>
+
+</html>
